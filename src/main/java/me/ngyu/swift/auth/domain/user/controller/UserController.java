@@ -1,6 +1,7 @@
 package me.ngyu.swift.auth.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import me.ngyu.swift.auth.domain.user.dto.TokenResponse;
 import me.ngyu.swift.auth.domain.user.dto.UserDto;
 import me.ngyu.swift.auth.domain.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -22,4 +23,10 @@ public class UserController {
     userService.register(request);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
+
+  @PostMapping("/login")
+  public ResponseEntity<TokenResponse> login(@RequestBody UserDto.UserLoginRequest request) {
+    return ResponseEntity.ok(userService.login(request));
+  }
+
 }
