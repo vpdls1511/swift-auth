@@ -1,9 +1,13 @@
 package me.ngyu.swift.auth.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
+import me.ngyu.swift.auth.domain.client.entity.OAuthClient;
+import me.ngyu.swift.auth.domain.client.repository.OAuthClientRepository;
 import me.ngyu.swift.auth.domain.user.dto.TokenResponse;
 import me.ngyu.swift.auth.domain.user.dto.UserDto;
 import me.ngyu.swift.auth.domain.user.entity.User;
+import me.ngyu.swift.auth.domain.user.entity.UserClientConsent;
+import me.ngyu.swift.auth.domain.user.repository.UserClientConsentRepository;
 import me.ngyu.swift.auth.domain.user.repository.UserRepository;
 import me.ngyu.swift.auth.global.jwt.JwtProvider;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,6 +21,9 @@ import java.util.concurrent.TimeUnit;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final OAuthClientRepository oAuthClientRepository;
+  private final UserClientConsentRepository userClientConsentRepository;
+
   private final PasswordEncoder passwordEncoder;
   private final JwtProvider jwtProvider;
   private final RedisTemplate<String, String> redisTemplate;
@@ -44,6 +51,17 @@ public class UserService {
       throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
 
+    OAuthClient client = oAuthClientRepository.findByClientId(request.clientId())
+      .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 클라이언트입니다."));
+
+    if (!userClientConsentRepository.existsByUserAndOAuthClient(user, client)) {
+      userClientConsentRepository.save(UserClientConsent.builder()
+        .user(user)
+        .oAuthClient(client)
+        .scopes(client.getScopes())
+        .build());
+    }
+
     String accessToken = jwtProvider.generateAccessToken(user.getId(), user.getEmail());
     String refreshToken = jwtProvider.generateRefreshToken(user.getId());
 
@@ -56,7 +74,6 @@ public class UserService {
 
     return new TokenResponse(accessToken, refreshToken);
   }
-
   public UserDto.UserResponse getMyInfo(Long userId) {
     User user = userRepository.findById(userId)
       .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));

@@ -61,7 +61,7 @@ class UserControllerTest {
   @Test
   @DisplayName("로그인 성공 - 200 반환")
   void login_success() throws Exception {
-    UserDto.UserLoginRequest request = new UserDto.UserLoginRequest("test@email.com", "password123!");
+    UserDto.UserLoginRequest request = new UserDto.UserLoginRequest("test@email.com", "password123!", "test_client");
     TokenResponse tokenResponse = new TokenResponse("accessToken", "refreshToken");
 
     when(userService.login(any())).thenReturn(tokenResponse);
@@ -77,7 +77,7 @@ class UserControllerTest {
   @Test
   @DisplayName("로그인 실패 - 400 반환")
   void login_fail_returns400() throws Exception {
-    UserDto.UserLoginRequest request = new UserDto.UserLoginRequest("test@email.com", "wrongPassword!");
+    UserDto.UserLoginRequest request = new UserDto.UserLoginRequest("test@email.com", "wrongPassword!", "test_client");
 
     doThrow(new IllegalArgumentException("비밀번호가 일치하지 않습니다."))
       .when(userService).login(any());

@@ -1,7 +1,11 @@
 package me.ngyu.swift.auth.domain.user.service;
 
+import me.ngyu.swift.auth.domain.client.entity.OAuthClient;
+import me.ngyu.swift.auth.domain.client.repository.OAuthClientRepository;
 import me.ngyu.swift.auth.domain.user.dto.TokenResponse;
 import me.ngyu.swift.auth.domain.user.dto.UserDto;
+import me.ngyu.swift.auth.domain.user.entity.UserClientConsent;
+import me.ngyu.swift.auth.domain.user.repository.UserClientConsentRepository;
 import me.ngyu.swift.auth.domain.user.repository.UserRepository;
 import me.ngyu.swift.auth.domain.user.entity.User;
 import me.ngyu.swift.auth.global.jwt.JwtProvider;
@@ -39,6 +43,13 @@ class UserServiceTest {
   @Mock
   private RedisTemplate<String, String> redisTemplate;
 
+  @Mock
+  private OAuthClientRepository oAuthClientRepository;
+
+  @Mock
+  private UserClientConsentRepository userClientConsentRepository;
+
+
   @Test
   @DisplayName("회원가입 성공")
   void register_success() {
@@ -69,19 +80,28 @@ class UserServiceTest {
   @DisplayName("로그인 성공 - 토큰 반환")
   void login_success() {
     // given
-    UserDto.UserLoginRequest request = new UserDto.UserLoginRequest("test@email.com", "password123!");
+    UserDto.UserLoginRequest request = new UserDto.UserLoginRequest("test@email.com", "password123!", "test_client");
     User user = User.builder()
       .email("test@email.com")
       .password("encodedPassword")
       .name("남규")
       .build();
 
+    OAuthClient client = OAuthClient.builder()
+      .clientId("client-uuid")
+      .clientSecret("secret")
+      .name("My App")
+      .scopes("read")
+      .build();
+
     @SuppressWarnings("unchecked")
     ValueOperations<String, String> valueOps = mock(ValueOperations.class);
+
     when(redisTemplate.opsForValue()).thenReturn(valueOps);
+    when(oAuthClientRepository.findByClientId(any())).thenReturn(Optional.of(client));
+    when(userClientConsentRepository.existsByUserAndOAuthClient(any(), any())).thenReturn(true);
     when(jwtProvider.generateAccessToken(any(), any())).thenReturn("accessToken");
     when(jwtProvider.generateRefreshToken(any())).thenReturn("refreshToken");
-
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(user));
     when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(true);
 
@@ -97,7 +117,7 @@ class UserServiceTest {
   @DisplayName("존재하지 않는 이메일 로그인 시 예외 발생")
   void login_userNotFound_throwsException() {
     // given
-    UserDto.UserLoginRequest request = new UserDto.UserLoginRequest("notfound@email.com", "password123!");
+    UserDto.UserLoginRequest request = new UserDto.UserLoginRequest("notfound@email.com", "password123!", "test_client");
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
 
     // when & then
@@ -108,7 +128,7 @@ class UserServiceTest {
   @DisplayName("비밀번호 불일치 시 예외 발생")
   void login_wrongPassword_throwsException() {
     // given
-    UserDto.UserLoginRequest request = new UserDto.UserLoginRequest("test@email.com", "wrongPassword!");
+    UserDto.UserLoginRequest request = new UserDto.UserLoginRequest("test@email.com", "wrongPassword!", "test_client");
     User user = User.builder()
       .email("test@email.com")
       .password("encodedPassword")
@@ -159,5 +179,30 @@ class UserServiceTest {
 
     // when & then
     assertThrows(IllegalArgumentException.class, () -> userService.refresh("invalidToken"));
+  }
+
+  @Test
+  @DisplayName("첫 로그인 시 consent 자동 생성")
+  void login_firstTime_createConsent() {
+    // given
+    UserDto.UserLoginRequest request = new UserDto.UserLoginRequest("test@email.com", "password123!", "client-uuid");
+    User user = User.builder().email("test@email.com").password("encodedPassword").name("남규").build();
+    OAuthClient client = OAuthClient.builder().clientId("client-uuid").clientSecret("secret").name("My App").scopes("read").build();
+
+    when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(user));
+    when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(true);
+    when(oAuthClientRepository.findByClientId(request.clientId())).thenReturn(Optional.of(client));
+    when(userClientConsentRepository.existsByUserAndOAuthClient(user, client)).thenReturn(false);
+
+    ValueOperations<String, String> valueOps = mock(ValueOperations.class);
+    when(redisTemplate.opsForValue()).thenReturn(valueOps);
+    when(jwtProvider.generateAccessToken(any(), any())).thenReturn("accessToken");
+    when(jwtProvider.generateRefreshToken(any())).thenReturn("refreshToken");
+
+    // when
+    userService.login(request);
+
+    // then
+    verify(userClientConsentRepository, times(1)).save(any(UserClientConsent.class));
   }
 }
