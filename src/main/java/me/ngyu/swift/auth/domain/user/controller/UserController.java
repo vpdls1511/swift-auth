@@ -29,6 +29,14 @@ public class UserController {
     return ResponseEntity.ok(userService.login(request));
   }
 
+  @PostMapping("/logout")
+  public ResponseEntity<Void> logout(Authentication authentication) {
+    Long userId = (Long) authentication.getPrincipal();
+    userService.logout(userId);
+    return ResponseEntity.noContent().build();
+  }
+
+
   @GetMapping("/me")
   public ResponseEntity<UserDto.UserResponse> getMyInfo(Authentication authentication) {
     Long userId = (Long) authentication.getPrincipal();

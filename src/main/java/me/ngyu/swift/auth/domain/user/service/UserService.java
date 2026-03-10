@@ -42,7 +42,6 @@ public class UserService {
     userRepository.save(user);
   }
 
-
   public TokenResponse login(UserDto.UserLoginRequest request) {
     User user = userRepository.findByEmail(request.email())
       .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
@@ -74,6 +73,11 @@ public class UserService {
 
     return new TokenResponse(accessToken, refreshToken);
   }
+
+  public void logout(Long userId) {
+    redisTemplate.delete("refresh:" + userId);
+  }
+
   public UserDto.UserResponse getMyInfo(Long userId) {
     User user = userRepository.findById(userId)
       .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
@@ -107,4 +111,5 @@ public class UserService {
 
     return new TokenResponse(newAccessToken, newRefreshToken);
   }
+
 }
