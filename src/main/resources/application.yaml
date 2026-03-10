@@ -23,6 +23,6 @@ spring:
       password: R0ot@K3s#2026
 
 jwt:
-  secret: your-secret-key-here
+  secret: sw1ft-4uth-s3cur3-jwt-s3cr3t-k3y-2026!
   access-token-expiration: 3600      # 1시간 (초)
   refresh-token-expiration: 1209600  # 14일 (초)
