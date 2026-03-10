@@ -1,0 +1,57 @@
+package me.ngyu.swift.auth.domain.user.controller;
+
+import static org.mockito.ArgumentMatchers.any;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import me.ngyu.swift.auth.domain.user.dto.UserRegisterRequest;
+import me.ngyu.swift.auth.domain.user.service.UserService;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(UserController.class)
+@AutoConfigureMockMvc(addFilters = false)
+class UserControllerTest {
+
+  @Autowired
+  private MockMvc mockMvc;
+
+  @Autowired
+  private ObjectMapper objectMapper;
+
+  @MockitoBean
+  private UserService userService;
+
+  @Test
+  @DisplayName("회원가입 성공 - 201 반환")
+  void register_success() throws Exception {
+    UserRegisterRequest request = new UserRegisterRequest("test@email.com", "password123!", "남규");
+
+    mockMvc.perform(post("/api/users/register")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(request)))
+      .andExpect(status().isCreated());
+  }
+
+  @Test
+  @DisplayName("이메일 중복 - 400 반환")
+  void register_duplicateEmail_returns400() throws Exception {
+    UserRegisterRequest request = new UserRegisterRequest("test@email.com", "password123!", "남규");
+
+    doThrow(new IllegalArgumentException("이미 존재하는 이메일입니다."))
+      .when(userService).register(any());
+
+    mockMvc.perform(post("/api/users/register")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(request)))
+      .andExpect(status().isBadRequest());
+  }
+}
