@@ -3,6 +3,7 @@ package me.ngyu.swift.auth.domain.client.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.ngyu.swift.auth.domain.client.dto.OAuthClientDto;
 import me.ngyu.swift.auth.domain.client.service.OAuthClientService;
+import me.ngyu.swift.auth.global.jwt.JwtProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ class OAuthClientControllerTest {
 
   @Autowired
   private ObjectMapper objectMapper;
+
+  @MockitoBean
+  private JwtProvider jwtProvider;
 
   @MockitoBean
   private OAuthClientService oAuthClientService;

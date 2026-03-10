@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import me.ngyu.swift.auth.domain.user.dto.TokenResponse;
 import me.ngyu.swift.auth.domain.user.dto.UserDto;
 import me.ngyu.swift.auth.domain.user.service.UserService;
+import me.ngyu.swift.auth.global.jwt.JwtProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,10 @@ class UserControllerTest {
 
   @MockitoBean
   private UserService userService;
+
+  @MockitoBean
+  private JwtProvider jwtProvider;
+
 
   @Test
   @DisplayName("회원가입 성공 - 201 반환")
