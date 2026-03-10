@@ -11,6 +11,7 @@
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+./.idea/
 
 # AWS User-specific
 .idea/**/aws.xml
@@ -201,3 +202,4 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,macos,windows,gradle
+/.idea/
