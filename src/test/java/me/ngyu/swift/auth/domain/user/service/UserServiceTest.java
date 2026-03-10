@@ -122,4 +122,42 @@ class UserServiceTest {
     assertThrows(IllegalArgumentException.class, () -> userService.login(request));
   }
 
+  @Test
+  @DisplayName("토큰 재발급 성공")
+  void refresh_success() {
+    // given
+    String refreshToken = "validRefreshToken";
+    Long userId = 1L;
+
+    when(jwtProvider.validateToken(refreshToken)).thenReturn(true);
+    when(jwtProvider.extractUserId(refreshToken)).thenReturn(userId);
+
+    ValueOperations<String, String> valueOps = mock(ValueOperations.class);
+    when(redisTemplate.opsForValue()).thenReturn(valueOps);
+    when(valueOps.get("refresh:" + userId)).thenReturn(refreshToken);
+
+    when(jwtProvider.generateAccessToken(any(), any())).thenReturn("newAccessToken");
+    when(jwtProvider.generateRefreshToken(any())).thenReturn("newRefreshToken");
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(
+      User.builder().email("test@email.com").password("encoded").name("남규").build()
+    ));
+
+    // when
+    TokenResponse response = userService.refresh(refreshToken);
+
+    // then
+    assertNotNull(response.accessToken());
+    assertNotNull(response.refreshToken());
+  }
+
+  @Test
+  @DisplayName("유효하지 않은 refresh token 재발급 실패")
+  void refresh_invalidToken_throwsException() {
+    // given
+    when(jwtProvider.validateToken("invalidToken")).thenReturn(false);
+
+    // when & then
+    assertThrows(IllegalArgumentException.class, () -> userService.refresh("invalidToken"));
+  }
 }

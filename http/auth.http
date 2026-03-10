@@ -19,7 +19,9 @@ Content-Type: application/json
 
 > {%
   client.global.set("accessToken", response.body.accessToken);
+  client.global.set("refreshToken", response.body.refreshToken);
 %}
+
 
 ### OAuth 클라이언트 등록
 POST http://localhost:8080/api/clients/register
@@ -34,3 +36,12 @@ Content-Type: application/json
 ### 내 정보 조회
 GET http://localhost:8080/api/users/me
 Authorization: Bearer {{accessToken}}
+
+
+### 토큰 재발급
+POST http://localhost:8080/api/users/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}

@@ -51,4 +51,5 @@ class JwtProviderTest {
     String token = jwtProvider.generateAccessToken(1L, "test@email.com");
     assertFalse(jwtProvider.validateToken(token));
   }
+
 }

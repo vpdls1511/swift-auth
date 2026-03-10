@@ -63,4 +63,31 @@ public class UserService {
     return new UserDto.UserResponse(user.getId(), user.getEmail(), user.getName());
   }
 
+  public TokenResponse refresh(String refreshToken) {
+    if (!jwtProvider.validateToken(refreshToken)) {
+      throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+    }
+
+    Long userId = jwtProvider.extractUserId(refreshToken);
+    String stored = redisTemplate.opsForValue().get("refresh:" + userId);
+
+    if (!refreshToken.equals(stored)) {
+      throw new IllegalArgumentException("토큰이 일치하지 않습니다.");
+    }
+
+    User user = userRepository.findById(userId)
+      .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+    String newAccessToken = jwtProvider.generateAccessToken(user.getId(), user.getEmail());
+    String newRefreshToken = jwtProvider.generateRefreshToken(user.getId());
+
+    redisTemplate.opsForValue().set(
+      "refresh:" + userId,
+      newRefreshToken,
+      jwtProvider.getRefreshTokenExpiration(),
+      TimeUnit.SECONDS
+    );
+
+    return new TokenResponse(newAccessToken, newRefreshToken);
+  }
 }
