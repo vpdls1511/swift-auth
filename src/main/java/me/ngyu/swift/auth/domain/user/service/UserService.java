@@ -1,4 +1,4 @@
-package me.ngyu.swift.auth.domain.client.service;
+package me.ngyu.swift.auth.domain.user.service;
 
 import me.ngyu.swift.auth.domain.user.dto.UserRegisterRequest;
 import org.springframework.stereotype.Service;

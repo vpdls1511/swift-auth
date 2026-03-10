@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "oauth_client")
+@Table(name = "oauth_client", schema = "client")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OAuthClient {

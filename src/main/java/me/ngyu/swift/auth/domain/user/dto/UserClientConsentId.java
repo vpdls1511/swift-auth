@@ -1,4 +1,4 @@
-package me.ngyu.swift.auth.domain.client.entity;
+package me.ngyu.swift.auth.domain.user.dto;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package me.ngyu.swift.auth.domain.client.repository;
+package me.ngyu.swift.auth.domain.user.repository;
 
 import me.ngyu.swift.auth.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,16 +1,17 @@
-package me.ngyu.swift.auth.domain.client.entity;
+package me.ngyu.swift.auth.domain.user.dto;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.ngyu.swift.auth.domain.client.entity.OAuthClient;
 import me.ngyu.swift.auth.domain.user.entity.User;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_client_consent")
+@Table(name = "user_client_consent", schema = "usr")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserClientConsent {

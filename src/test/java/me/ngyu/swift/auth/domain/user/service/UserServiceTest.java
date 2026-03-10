@@ -1,7 +1,6 @@
 package me.ngyu.swift.auth.domain.user.service;
 
-import me.ngyu.swift.auth.domain.client.repository.UserRepository;
-import me.ngyu.swift.auth.domain.client.service.UserService;
+import me.ngyu.swift.auth.domain.user.repository.UserRepository;
 import me.ngyu.swift.auth.domain.user.dto.UserRegisterRequest;
 import me.ngyu.swift.auth.domain.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
