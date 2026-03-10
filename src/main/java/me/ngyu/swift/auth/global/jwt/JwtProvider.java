@@ -1,5 +1,7 @@
 package me.ngyu.swift.auth.global.jwt;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
@@ -40,6 +42,27 @@ public class JwtProvider {
       .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration * 1000))
       .signWith(getSigningKey())
       .compact();
+  }
+
+  public Long extractUserId(String token) {
+    return Long.parseLong(getClaims(token).getSubject());
+  }
+
+  public boolean validateToken(String token) {
+    try {
+      getClaims(token);
+      return true;
+    } catch (JwtException | IllegalArgumentException e) {
+      return false;
+    }
+  }
+
+  private Claims getClaims(String token) {
+    return Jwts.parser()
+      .verifyWith(getSigningKey())
+      .build()
+      .parseSignedClaims(token)
+      .getPayload();
   }
 
   private SecretKey getSigningKey() {
