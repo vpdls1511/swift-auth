@@ -56,4 +56,11 @@ public class UserService {
 
     return new TokenResponse(accessToken, refreshToken);
   }
+
+  public UserDto.UserResponse getMyInfo(Long userId) {
+    User user = userRepository.findById(userId)
+      .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+    return new UserDto.UserResponse(user.getId(), user.getEmail(), user.getName());
+  }
+
 }

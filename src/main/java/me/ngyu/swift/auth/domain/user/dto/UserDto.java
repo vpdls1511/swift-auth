@@ -8,7 +8,15 @@ public class UserDto {
   ) {
   }
 
-  public record UserLoginRequest(String email, String password) {}
+  public record UserLoginRequest(String email, String password) {
+  }
+
+  public record UserResponse(
+    Long id,
+    String email,
+    String name
+  ) {
+  }
 
 }
 
