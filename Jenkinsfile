@@ -34,7 +34,7 @@ pipeline {
                         > /tmp/kaniko/.docker/config.json
                     export DOCKER_CONFIG=/tmp/kaniko/.docker
                     kaniko \
-                        --kaniko-dir /tmp/kaniko \
+                        --force \
                         --context . \
                         --dockerfile ./Dockerfile \
                         --destination vpdls1511/auth-api:latest
