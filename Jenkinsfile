@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "ngyu/auth-api"
+        IMAGE_NAME = "vpdls1511/auth-api"
         IMAGE_TAG = "latest"
     }
 
@@ -33,7 +33,7 @@ pipeline {
                     kaniko \
                         --context . \
                         --dockerfile ./Dockerfile \
-                        --destination ngyu/auth-api:latest
+                        --destination vpdls1511/auth-api:latest
                     '''
                 }
             }
