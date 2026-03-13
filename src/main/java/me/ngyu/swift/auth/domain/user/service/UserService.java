@@ -53,10 +53,10 @@ public class UserService {
     OAuthClient client = oAuthClientRepository.findByClientId(request.clientId())
       .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 클라이언트입니다."));
 
-    if (!userClientConsentRepository.existsByUserAndOAuthClient(user, client)) {
+    if (!userClientConsentRepository.existsByUserAndAuthClient(user, client)) {
       userClientConsentRepository.save(UserClientConsent.builder()
         .user(user)
-        .oAuthClient(client)
+        .authClient(client)
         .scopes(client.getScopes())
         .build());
     }

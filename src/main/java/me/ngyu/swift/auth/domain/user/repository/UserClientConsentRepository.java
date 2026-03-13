@@ -7,5 +7,5 @@ import me.ngyu.swift.auth.domain.user.entity.UserClientConsentId;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserClientConsentRepository extends JpaRepository<UserClientConsent, UserClientConsentId> {
-  boolean existsByUserAndOAuthClient(User user, OAuthClient oAuthClient);
+  boolean existsByUserAndAuthClient(User user, OAuthClient oAuthClient);
 }

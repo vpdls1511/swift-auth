@@ -99,7 +99,7 @@ class UserServiceTest {
 
     when(redisTemplate.opsForValue()).thenReturn(valueOps);
     when(oAuthClientRepository.findByClientId(any())).thenReturn(Optional.of(client));
-    when(userClientConsentRepository.existsByUserAndOAuthClient(any(), any())).thenReturn(true);
+    when(userClientConsentRepository.existsByUserAndAuthClient(any(), any())).thenReturn(true);
     when(jwtProvider.generateAccessToken(any(), any())).thenReturn("accessToken");
     when(jwtProvider.generateRefreshToken(any())).thenReturn("refreshToken");
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(user));
@@ -192,7 +192,7 @@ class UserServiceTest {
     when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(user));
     when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(true);
     when(oAuthClientRepository.findByClientId(request.clientId())).thenReturn(Optional.of(client));
-    when(userClientConsentRepository.existsByUserAndOAuthClient(user, client)).thenReturn(false);
+    when(userClientConsentRepository.existsByUserAndAuthClient(user, client)).thenReturn(false);
 
     ValueOperations<String, String> valueOps = mock(ValueOperations.class);
     when(redisTemplate.opsForValue()).thenReturn(valueOps);

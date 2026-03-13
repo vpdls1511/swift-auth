@@ -26,7 +26,7 @@ public class UserClientConsent {
   @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("clientId")
   @JoinColumn(name = "client_id")
-  private OAuthClient oAuthClient;
+  private OAuthClient authClient;
 
   @Column(nullable = false)
   private String scopes;
@@ -35,10 +35,10 @@ public class UserClientConsent {
   private LocalDateTime consentedAt;
 
   @Builder
-  public UserClientConsent(User user, OAuthClient oAuthClient, String scopes) {
-    this.id = new UserClientConsentId(user.getId(), oAuthClient.getId());
+  public UserClientConsent(User user, OAuthClient authClient, String scopes) {
+    this.id = new UserClientConsentId(user.getId(), authClient.getId());
     this.user = user;
-    this.oAuthClient = oAuthClient;
+    this.authClient = authClient;
     this.scopes = scopes;
     this.consentedAt = LocalDateTime.now();
   }
