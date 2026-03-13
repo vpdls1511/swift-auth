@@ -35,6 +35,9 @@ pipeline {
                     export DOCKER_CONFIG=/tmp/kaniko/.docker
                     kaniko \
                         --force \
+                        --ignore-path /bin \
+                        --ignore-path /sbin \
+                        --ignore-path /usr \
                         --context . \
                         --dockerfile ./Dockerfile \
                         --destination vpdls1511/auth-api:latest
