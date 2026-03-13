@@ -29,7 +29,9 @@ pipeline {
                 )]) {
                     sh '''
                     mkdir -p /kaniko/.docker
-                    echo "{\\"auths\\":{\\"https://index.docker.io/v1/\\":{\\"auth\\":\\"$(echo -n $DOCKER_USER:$DOCKER_PASS | base64)\\"}}}" > /kaniko/.docker/config.json
+                    printf '{"auths":{"https://index.docker.io/v1/":{"auth":"%s"}}}' \
+                        $(printf '%s:%s' $DOCKER_USER $DOCKER_PASS | base64 -w 0) \
+                        > /kaniko/.docker/config.json
                     kaniko \
                         --context . \
                         --dockerfile ./Dockerfile \
