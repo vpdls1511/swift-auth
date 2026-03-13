@@ -27,14 +27,14 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-                    sh """
+                    sh '''
+                    mkdir -p /kaniko/.docker
+                    echo "{\\"auths\\":{\\"https://index.docker.io/v1/\\":{\\"auth\\":\\"$(echo -n $DOCKER_USER:$DOCKER_PASS | base64)\\"}}}" > /kaniko/.docker/config.json
                     kaniko \
                         --context . \
                         --dockerfile ./Dockerfile \
-                        --destination $IMAGE_NAME:$IMAGE_TAG \
-                        --registry-username=$DOCKER_USER \
-                        --registry-password=$DOCKER_PASS
-                    """
+                        --destination ngyu/auth-api:latest
+                    '''
                 }
             }
         }
