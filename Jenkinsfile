@@ -28,12 +28,13 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     sh '''
-                    mkdir -p /kaniko/.docker
+                    mkdir -p /tmp/kaniko/.docker
                     printf '{"auths":{"https://index.docker.io/v1/":{"auth":"%s"}}}' \
                         $(printf '%s:%s' $DOCKER_USER $DOCKER_PASS | base64 -w 0) \
-                        > /kaniko/.docker/config.json
-                    export DOCKER_CONFIG=/kaniko/.docker
+                        > /tmp/kaniko/.docker/config.json
+                    export DOCKER_CONFIG=/tmp/kaniko/.docker
                     kaniko \
+                        --kaniko-dir /tmp/kaniko \
                         --context . \
                         --dockerfile ./Dockerfile \
                         --destination vpdls1511/auth-api:latest
