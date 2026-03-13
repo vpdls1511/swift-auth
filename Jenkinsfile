@@ -17,7 +17,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh '/usr/local/bin/gradle clean build -x test'
-                sh 'ls build/libs/'  // 실제 파일명 확인
+                sh 'ls build/libs/'
             }
         }
 
