@@ -16,8 +16,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh '/usr/local/bin/gradle clean build -x test'
-                sh 'ls build/libs/'
+                sh '/usr/local/bin/gradle clean build -x test && ls build/libs/'
             }
         }
 
