@@ -32,6 +32,7 @@ pipeline {
                     printf '{"auths":{"https://index.docker.io/v1/":{"auth":"%s"}}}' \
                         $(printf '%s:%s' $DOCKER_USER $DOCKER_PASS | base64 -w 0) \
                         > /kaniko/.docker/config.json
+                    export DOCKER_CONFIG=/kaniko/.docker
                     kaniko \
                         --context . \
                         --dockerfile ./Dockerfile \
